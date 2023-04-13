@@ -1,6 +1,7 @@
 """Xetra ETL Component"""
 from typing import NamedTuple
 from code.common.s3 import S3BucketConnector
+import logging
 
 class XetraSourceConfig(NamedTuple):
     """
@@ -74,6 +75,7 @@ class XetraETL():
         :param src_args: NamedTuple class with source configuration data
         :param trg_args: NamedTuple class with target configuration data
         """
+        self._logger = logging.getLogger(__name__)
 
         self.s3_bucket_src = s3_bucket_src
         self.s3_bucket_trg = s3_bucket_trg
