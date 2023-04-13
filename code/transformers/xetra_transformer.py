@@ -202,4 +202,13 @@ class XetraETL():
         return True
 
     def etl_report1(self):
-        pass
+        """
+        Extract, transform and load to create a report
+        """
+        # Extract
+        data_frame = self.extract()
+        # Transform
+        data_frame = self.transform_report1(data_frame)
+        # Load
+        self.load(data_frame)
+        return True
