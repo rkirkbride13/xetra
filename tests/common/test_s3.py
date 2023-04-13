@@ -24,7 +24,7 @@ class TestS3BucketConnectorMethods(unittest.TestCase):
         # Defining the class arguments
         self.s3_access_key = 'AWS_ACCESS_KEY_ID'
         self.s3_secret_key = 'AWS_SECRET_ACCESS_KEY'
-        self.s3_endpoint_url = 'https://s3.eu-western-1.amazonaws.com'
+        self.s3_endpoint_url = 'https://s3.eu-west-2.amazonaws.com'
         self.s3_bucket_name = 'test-bucket'
         # Create s3 access keys as environment variables
         os.environ[self.s3_access_key] = 'KEY1'
@@ -34,7 +34,7 @@ class TestS3BucketConnectorMethods(unittest.TestCase):
             service_name='s3', endpoint_url=self.s3_endpoint_url)
         self.s3.create_bucket(Bucket=self.s3_bucket_name,
                               CreateBucketConfiguration={
-                                  'LocationConstraint': 'eu-western-1'
+                                  'LocationConstraint': 'eu-west-2'
                               })
         self.s3_bucket = self.s3.Bucket(self.s3_bucket_name)
         # Creating a testing instance
