@@ -2,6 +2,7 @@
 import os
 import unittest
 from unittest.mock import patch
+from io import BytesIO
 
 import boto3
 import pandas as pd
@@ -218,6 +219,56 @@ class TestXetraETLMethods(unittest.TestCase):
                 self.assertIn(log2_exp, logm.output[1])
         # Test after method execution
         self.assertTrue(df_exp.equals(df_result))
+
+    def test_load(self):
+        """
+        Tests the load method
+        """
+        # Expected results
+        log1_exp = 'Xetra target data successfully written'
+        log2_exp = 'Xetra meta file successfully updated'
+        df_exp = self.df_report
+        meta_exp = ['2021-04-17', '2021-04-18', '2021-04-19']
+        # Test init
+        extract_date = '2021-04-17'
+        extract_date_list = ['2021-04-16',
+                             '2021-04-17', '2021-04-18', '2021-04-19']
+        df_input = self.df_report
+        # Method execution
+        with patch.object(MetaProcess, "return_date_list",
+                          return_value=[extract_date, extract_date_list]):
+            xetra_etl = XetraETL(self.s3_bucket_src, self.s3_bucket_trg,
+                                 self.meta_key, self.source_config, self.target_config)
+            with self.assertLogs() as logm:
+                xetra_etl.load(df_input)
+                # Log test after method execution
+                self.assertIn(log1_exp, logm.output[1])
+                self.assertIn(log2_exp, logm.output[4])
+        # Test after method execution
+        print(self.s3_bucket_trg.list_files_in_prefix(
+            self.target_config.trg_key))
+        trg_file = self.s3_bucket_trg.list_files_in_prefix(
+            self.target_config.trg_key)[0]
+        data = self.trg_bucket.Object(key=trg_file).get().get('Body').read()
+        out_buffer = BytesIO(data)
+        df_result = pd.read_parquet(out_buffer)
+        self.assertTrue(df_exp.equals(df_result))
+        meta_file = self.s3_bucket_trg.list_files_in_prefix(self.meta_key)[0]
+        df_meta_result = self.s3_bucket_trg.read_csv_to_df(meta_file)
+        self.assertEqual(list(df_meta_result['source_date']), meta_exp)
+        # Cleanup after test
+        self.trg_bucket.delete_objects(
+            Delete={
+                'Objects': [
+                    {
+                        'Key': trg_file
+                    },
+                    {
+                        'Key': trg_file
+                    }
+                ]
+            }
+        )
 
 
 if __name__ == '__main__':
