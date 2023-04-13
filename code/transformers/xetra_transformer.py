@@ -3,8 +3,8 @@ from typing import NamedTuple
 from code.common.s3 import S3BucketConnector
 from code.common.meta_process import MetaProcess
 import logging
-import pandas as pd
 from datetime import datetime
+import pandas as pd
 
 
 class XetraSourceConfig(NamedTuple):

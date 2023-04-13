@@ -3,14 +3,12 @@ import os
 import unittest
 from unittest.mock import patch
 from io import BytesIO
-
-import boto3
-import pandas as pd
-from moto import mock_s3
-
 from code.common.s3 import S3BucketConnector
 from code.common.meta_process import MetaProcess
 from code.transformers.xetra_transformer import XetraETL, XetraSourceConfig, XetraTargetConfig
+import boto3
+import pandas as pd
+from moto import mock_s3
 
 
 class TestXetraETLMethods(unittest.TestCase):
