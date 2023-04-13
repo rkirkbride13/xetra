@@ -1,11 +1,12 @@
 """Connector and methods accessing S3"""
 import os
 import logging
-import boto3
-import pandas as pd
 from io import StringIO, BytesIO
 from code.common.custom_exceptions import WrongFormatException
 from code.common.constants import S3FileTypes
+import pandas as pd
+
+import boto3
 
 
 class S3BucketConnector():

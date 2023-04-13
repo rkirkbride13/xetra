@@ -1,12 +1,12 @@
 """TestS3BucketConnectorMethods"""
 import os
 import unittest
-import boto3
-from moto import mock_s3
 from code.common.s3 import S3BucketConnector
-import pandas as pd
-from io import StringIO, BytesIO
 from code.common.custom_exceptions import WrongFormatException
+from io import StringIO, BytesIO
+from moto import mock_s3
+import pandas as pd
+import boto3
 
 
 class TestS3BucketConnectorMethods(unittest.TestCase):

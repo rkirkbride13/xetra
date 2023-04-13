@@ -3,15 +3,13 @@ import os
 import unittest
 from io import StringIO
 from datetime import datetime, timedelta
-
-import boto3
-import pandas as pd
-from moto import mock_s3
-
 from code.common.s3 import S3BucketConnector
 from code.common.meta_process import MetaProcess
 from code.common.constants import MetaProcessFormat
 from code.common.custom_exceptions import WrongMetaFileException
+import pandas as pd
+from moto import mock_s3
+import boto3
 
 
 class TestMetaProcessMethods(unittest.TestCase):

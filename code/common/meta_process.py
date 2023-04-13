@@ -1,12 +1,13 @@
 """
 Methods for processing the meta file
 """
-import pandas as pd
 from code.common.s3 import S3BucketConnector
 from code.common.constants import MetaProcessFormat
+from code.common.custom_exceptions import WrongMetaFileException
+
 from datetime import datetime, timedelta
 import collections
-from code.common.custom_exceptions import WrongMetaFileException
+import pandas as pd
 
 
 class MetaProcess():
