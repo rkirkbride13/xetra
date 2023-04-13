@@ -1,7 +1,10 @@
 """Xetra ETL Component"""
 from typing import NamedTuple
 from code.common.s3 import S3BucketConnector
+from code.common.meta_process import MetaProcess
 import logging
+import pandas as pd
+
 
 class XetraSourceConfig(NamedTuple):
     """
@@ -28,6 +31,7 @@ class XetraSourceConfig(NamedTuple):
     src_col_max_price: str
     src_col_traded_vol: str
 
+
 class XetraTargetConfig(NamedTuple):
     """
     Class for target configuration data
@@ -49,14 +53,15 @@ class XetraTargetConfig(NamedTuple):
     trg_col_isin: str
     trg_col_date: str
     trg_col_op_price: str
-    trg_col_close_price: str
+    trg_col_clos_price: str
     trg_col_min_price: str
     trg_col_max_price: str
-    trg_col_dail_traded_vol: str
+    trg_col_dail_trad_vol: str
     trg_col_ch_prev_clos: str
     trg_key: str
     trg_key_date_format: str
     trg_format: str
+
 
 class XetraETL():
     """
@@ -79,21 +84,37 @@ class XetraETL():
 
         self.s3_bucket_src = s3_bucket_src
         self.s3_bucket_trg = s3_bucket_trg
-        self.meta_Key = meta_key
+        self.meta_key = meta_key
         self.src_args = src_args
         self.trg_args = trg_args
-        self.extract_date = 
-        self.extract_date_list =
-        self.meta_update_list =
+        self.extract_date, self.extract_date_list = MetaProcess.return_date_list(
+            self.src_args.src_first_extract_date, self.meta_key, self.s3_bucket_trg
+        )
+        self.meta_update_list = None
 
     def extract(self):
+        """
+        Read the source data and concatenates it to one Pandas DataFrame
+
+        :returns:
+          data_frame: Pandas DataFrame with the extracted data
+        """
+        self._logger.info('Extracting Xetra source files started...')
+        files = [key for date in self.extract_date_list
+                 for key in self.s3_bucket_src.list_files_in_prefix(date)]
+        if not files:
+            data_frame = pd.DataFrame()
+        else:
+            data_frame = pd.concat([self.s3_bucket_src.read_csv_to_df(file)
+                                    for file in files], ignore_index=True)
+        self._logger.info('Extracting Xetra source files finished')
+        return data_frame
+
+    def transform_report1(self):
         pass
-    
-    def transform_report1(slef):
-        pass
-    
+
     def load(self):
         pass
-    
+
     def etl_report1(self):
         pass
